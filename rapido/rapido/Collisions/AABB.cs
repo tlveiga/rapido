@@ -29,14 +29,10 @@ namespace rapido.Collisions
 
         public bool CheckBounds(Box box)
         {
-            if (OutBounds != null && !InsideBounds(box))
-            {
+            bool result = !InsideBounds(box);
+            if (OutBounds != null && result)
                 OutBounds(this, box);
-                return true;
-            }
-            else
-                return false;
-
+            return result;
         }
 
         /// <summary>
@@ -45,13 +41,10 @@ namespace rapido.Collisions
         /// <param name="target"></param>
         public bool CheckCollision(AABB target)
         {
-            if (Collision != null && Collides(target))
-            {
+            bool result = Collides(target);
+            if (Collision != null && result)
                 Collision(this, target);
-                return true;
-            }
-            else
-                return false;
+            return result;
         }
     }
 }

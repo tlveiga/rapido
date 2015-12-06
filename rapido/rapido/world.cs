@@ -66,7 +66,7 @@ namespace rapido
                 {
                     foreach (string group in body.CollisionGroups)
                     {
-                        Group grp = Groups.Find(x => x.GroupID.Equals(group));
+                        Group grp = Groups.Find(x => x.ID.Equals(group));
                         if (grp != null)
                         {
                             foreach (Body groupbody in grp)

@@ -9,6 +9,9 @@ namespace rapido
     {
         protected abstract void updateBounds();
 
+        public delegate void BodyHandler(object sender);
+        public event BodyHandler Destroyed;
+        public string ID { get; set; }
         /// <summary>
         /// Current archor position
         /// </summary>
@@ -69,6 +72,9 @@ namespace rapido
             foreach (Group group in World.Groups)
                 group.Remove(this);
             World.Bodies.Remove(this);
+
+            if (Destroyed != null)
+                Destroyed(this);
         }
 
     }

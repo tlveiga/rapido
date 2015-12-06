@@ -7,11 +7,11 @@ namespace rapido
 {
     public class Group: List<Body>
     {
-        public string GroupID { get; private set; }
+        public string ID { get; private set; }
 
         public Group(string groupid)
         {
-            GroupID = groupid;
+            ID = groupid;
         }
     }
 }

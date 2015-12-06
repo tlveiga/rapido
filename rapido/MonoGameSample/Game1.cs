@@ -16,12 +16,16 @@ namespace MonoGameSample
         GraphicsDeviceManager graphics = null;
         SpriteBatch spriteBatch;
         Texture2D _square;
+        Texture2D _player;
         Random rnd = new Random();
+        SpriteFont font;
+        int point = 0;
 
         World world;
         Color body1color;
-        float speed;
         Color body2color;
+
+        rapido.Shapes.Rectangle player;
 
         public Game1()
         {
@@ -33,8 +37,8 @@ namespace MonoGameSample
         protected Body createBody()
         {
             rapido.Shapes.Rectangle body;
-            body = new rapido.Shapes.Rectangle(world, new rapido.Common.Point(world.Size.X * (float)rnd.NextDouble(), world.Size.Y * (float)rnd.NextDouble()), world.Size.X * 0.01f, world.Size.X * 0.01f);
-            body.Velocity = new rapido.Common.Vector((float)(rnd.NextDouble() * Math.PI * 2), speed);
+            body = new rapido.Shapes.Rectangle(world, new rapido.Common.Point(world.Size.X * (float)rnd.NextDouble(), world.Size.Y * (float)rnd.NextDouble()), world.Size.X * 0.1f, world.Size.X * 0.1f);
+            body.Velocity = new rapido.Common.Vector((float)(rnd.NextDouble() * Math.PI * 2), 0.1f * world.Size.X);
             body.Collision += Body_Collision;
             body.Collide = true;
             body.CollisionGroups.Add("group");
@@ -46,6 +50,23 @@ namespace MonoGameSample
             return body;
         }
 
+
+        protected Body fire()
+        {
+            rapido.Shapes.Rectangle body;
+            body = new rapido.Shapes.Rectangle(world, player.Position, 10, 10);
+            body.Velocity = new rapido.Common.Vector((float)(rnd.NextDouble() * Math.PI * 2), 0.52f * world.Size.X);
+            body.CollideWithWorldBoundaries = true;
+            body.OutBounds += Fire_OutBounds;
+
+            return body;
+        }
+
+        private void Fire_OutBounds(object sender, Box target)
+        {
+            (sender as Body).WillDestroy = true;
+        }
+
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -54,10 +75,12 @@ namespace MonoGameSample
         /// </summary>
         protected override void Initialize()
         {
-            speed = graphics.PreferredBackBufferWidth * 0.75f;
-
             world = new World(new rapido.Common.Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
             world.Groups.Add(new Group("group"));
+
+            player = (rapido.Shapes.Rectangle)createBody();
+            player.Velocity = Vector.Zero;
+            world.Bodies.Add(player);
 
             base.Initialize();
         }
@@ -69,6 +92,12 @@ namespace MonoGameSample
 
         private void Body_Collision(object sender, object target)
         {
+            if (sender == player)
+            {
+                (target as Body).WillDestroy = true;
+                point++;
+            }
+            return;
             (sender as Body).WillDestroy = true;
             (target as Body).WillDestroy = true;
             body2color = Color.White * 0.5f;
@@ -85,7 +114,8 @@ namespace MonoGameSample
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _square = Content.Load<Texture2D>("square");
-            // TODO: use this.Content to load your game content here
+            _player = Content.Load<Texture2D>("player");
+            font = Content.Load<SpriteFont>("font");
         }
 
         /// <summary>
@@ -107,7 +137,14 @@ namespace MonoGameSample
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            if (world.Bodies.Count < 100)
+            MouseState mouse = Mouse.GetState();
+            rapido.Common.Point mousepoint = new rapido.Common.Point(mouse.X, mouse.Y);
+            player.Velocity = new Vector(player.Position, mousepoint);
+
+            if (mouse.LeftButton == ButtonState.Pressed)
+                world.Bodies.Add(fire());
+
+            if (world.Bodies.Count < 3)
                 world.Bodies.Add(createBody());
 
             body1color = Color.White;
@@ -128,10 +165,14 @@ namespace MonoGameSample
 
             spriteBatch.Begin();
 
+            spriteBatch.Draw(_player, new Microsoft.Xna.Framework.Rectangle((int)player.Bounds.Left, (int)player.Bounds.Top, (int)player.Width, (int)player.Height), Color.White);
             foreach (rapido.Shapes.Rectangle body in world.Bodies)
             {
-                spriteBatch.Draw(_square, new Microsoft.Xna.Framework.Rectangle((int)body.Bounds.Left, (int)body.Bounds.Top, (int)body.Width, (int)body.Height), body2color);
+                if (body == player) continue;
+                spriteBatch.Draw(_square, new Microsoft.Xna.Framework.Rectangle((int)body.Bounds.Left, (int)body.Bounds.Top, (int)body.Width, (int)body.Height), Color.White);
             }
+
+            spriteBatch.DrawString(font, point.ToString(), new Vector2(0, 0), Color.Black);
 
             spriteBatch.End();
 
