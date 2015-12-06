@@ -22,9 +22,13 @@ namespace rapido
         /// </summary>
         public Vector Velocity { get; set; }
         /// <summary>
-        /// Body colides with world boundaries
+        /// Body collides with world boundaries
         /// </summary>
         public bool CollideWithWorldBoundaries { get; set; }
+        /// <summary>
+        /// Bounces when collides with world boundaries
+        /// </summary>
+        public bool BounceInWorldBoundaries { get; set; }
         /// <summary>
         /// Body collides with other Bodies
         /// </summary>
@@ -32,9 +36,18 @@ namespace rapido
 
         public List<string> CollisionGroups { get; private set; }
 
-        public Body()
+        public World World { get; set; }
+
+        /// <summary>
+        /// Will be destroyed next update
+        /// </summary>
+        public bool WillDestroy { get; set; }
+
+        public Body(World world)
         {
             CollisionGroups = new List<string>();
+            WillDestroy = false;
+            World = world;
         }
 
         public void UpdateBody(float timelapsed)
@@ -49,6 +62,13 @@ namespace rapido
 
             updateBounds();
 
+        }
+
+        public void Destroy()
+        {
+            foreach (Group group in World.Groups)
+                group.Remove(this);
+            World.Bodies.Remove(this);
         }
 
     }

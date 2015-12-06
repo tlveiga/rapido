@@ -27,20 +27,31 @@ namespace rapido.Collisions
             return Bounds.Top > box.Top && Bounds.Bottom < box.Bottom && Bounds.Left > box.Left && Bounds.Right < box.Right;
         }
 
-        public void CheckBounds(Box box)
+        public bool CheckBounds(Box box)
         {
-            if(OutBounds != null && !InsideBounds(box))
+            if (OutBounds != null && !InsideBounds(box))
+            {
                 OutBounds(this, box);
+                return true;
+            }
+            else
+                return false;
+
         }
 
         /// <summary>
         /// Check collision and fires event
         /// </summary>
         /// <param name="target"></param>
-        public void CheckCollision(AABB target)
+        public bool CheckCollision(AABB target)
         {
             if (Collision != null && Collides(target))
+            {
                 Collision(this, target);
+                return true;
+            }
+            else
+                return false;
         }
     }
 }

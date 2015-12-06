@@ -23,10 +23,20 @@ namespace rapido.Common
         {
             Origin = beginpoint;
             Lambda = endpoint - beginpoint;
-            
+
 
             Theta = (float)Math.Atan2(endpoint.Y - beginpoint.Y, endpoint.X - endpoint.X);
             Length = beginpoint.DistanceTo(endpoint);
+        }
+
+        public Vector(float theta, float length) : this(Point.Zero, theta, length) { }
+        public Vector(Point origin, float theta, float length)
+        {
+            Theta = theta;
+            Length = length;
+
+            Origin = origin;
+            Lambda = new Point(length * (float)Math.Cos(theta), length * (float)Math.Sin(theta));
         }
 
         public override int GetHashCode()

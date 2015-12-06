@@ -10,7 +10,7 @@ namespace rapido.Shapes
     {
         public float Radius { get; private set; }
 
-        public Circle(Point center, float radius)
+        public Circle(World world, Point center, float radius) : base (world)
         {
             Position = center;
             Radius = radius;

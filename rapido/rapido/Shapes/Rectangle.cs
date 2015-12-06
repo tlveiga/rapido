@@ -14,7 +14,7 @@ namespace rapido.Shapes
         protected float _halfWidth;
         protected float _halfHeight;
 
-        public Rectangle(Point center, float width, float height)
+        public Rectangle(World world, Point center, float width, float height) : base(world)
         {
             Position = center;
             Width = width;

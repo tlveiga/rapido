@@ -15,7 +15,7 @@ namespace Sample
             DateTime begin = DateTime.Now;
             World world = new World(new Point(100, 50));
 
-            Rectangle body1 = new Rectangle(new Point(100f * 0.1f, 50f * 0.5f), 5, 5);
+            Rectangle body1 = new Rectangle(world, new Point(100f * 0.1f, 50f * 0.5f), 5, 5);
             body1.Velocity = new Vector(new Point(15, 0));
             body1.Collision += Body_Collision;
             body1.Collide = true;
@@ -23,7 +23,7 @@ namespace Sample
             body1.CollideWithWorldBoundaries = true;
             body1.OutBounds += Body1_OutBounds;
 
-            Rectangle body2 = new Rectangle(new Point(100f * 0.9f, 50f * 0.5f), 5, 5);
+            Rectangle body2 = new Rectangle(world, new Point(100f * 0.9f, 50f * 0.5f), 5, 5);
             body2.Velocity = new Vector(new Point(0, 5));
             body2.Collision += Body_Collision;
             body2.Collide = true;
