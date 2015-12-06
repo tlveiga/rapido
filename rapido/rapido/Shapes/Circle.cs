@@ -17,12 +17,14 @@ namespace rapido.Shapes
             updateBounds();
         }
 
-        protected void updateBounds()
+        protected override void updateBounds()
         {
-            _x = Position.X - Radius;
-            _X = Position.X + Radius;
-            _y = Position.Y - Radius;
-            _Y = Position.Y + Radius;
+            Box bounds = new Box();
+            bounds.Left = Position.X - Radius;
+            bounds.Right = Position.X + Radius;
+            bounds.Top = Position.Y - Radius;
+            bounds.Bottom = Position.Y + Radius;
+            Bounds = bounds;
         }
     }
 }

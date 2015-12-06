@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="Body.cs" />
     <Compile Include="Collisions\AABB.cs" />
-    <Compile Include="Collisions\CollisionObject.cs" />
+    <Compile Include="Common\Box.cs" />
     <Compile Include="Common\Point.cs" />
     <Compile Include="Common\Vector.cs" />
     <Compile Include="Group.cs" />

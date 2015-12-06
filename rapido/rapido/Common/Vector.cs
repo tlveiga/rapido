@@ -5,8 +5,11 @@ using System.Text;
 
 namespace rapido.Common
 {
-    public class Vector
+    public struct Vector
     {
+        private static Vector _zero = new Vector(Point.Zero);
+        public static Vector Zero { get { return _zero; } }
+
         public Point Origin { get; private set; }
         public Point Lambda { get; private set; }
 
@@ -14,16 +17,16 @@ namespace rapido.Common
         public float Theta { get; private set; }
         public float Length { get; private set; }
 
-        public Vector() : this(new Point(), new Point()) { }
+        public Vector(Point endpoint) : this(new Point(), endpoint) { }
 
-        public Vector(Point p1, Point p2)
+        public Vector(Point beginpoint, Point endpoint)
         {
-            Origin = p1;
-            Lambda = p2 - p1;
+            Origin = beginpoint;
+            Lambda = endpoint - beginpoint;
             
 
-            Theta = (float)Math.Atan2(p2.Y - p1.Y, p2.X - p2.X);
-            Length = p1.DistanceTo(p2);
+            Theta = (float)Math.Atan2(endpoint.Y - beginpoint.Y, endpoint.X - endpoint.X);
+            Length = beginpoint.DistanceTo(endpoint);
         }
 
         public override int GetHashCode()
@@ -33,8 +36,9 @@ namespace rapido.Common
 
         public override bool Equals(object obj)
         {
-            Vector v = obj as Vector;
-            return v != null && Origin.Equals(v.Origin) && Lambda.Equals(v.Lambda);
+            if (!(obj is Vector)) return false;
+            Vector v = (Vector)obj;
+            return Origin.Equals(v.Origin) && Lambda.Equals(v.Lambda);
         }
 
         public override string ToString()

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace rapido.Shapes
 {
-    class Rectangle : Body
+    public class Rectangle : Body
     {
         public float Width { get; private set; }
         public float Height { get; private set; }
@@ -25,12 +25,14 @@ namespace rapido.Shapes
             updateBounds();
         }
 
-        protected void updateBounds()
+        protected override void updateBounds()
         {
-            _x = Position.X - _halfWidth;
-            _X = Position.X + _halfWidth;
-            _y = Position.Y - _halfHeight;
-            _Y = Position.Y + _halfHeight;
+            Box bounds = new Box();
+            bounds.Left = Position.X - _halfWidth;
+            bounds.Right = Position.X + _halfWidth;
+            bounds.Top = Position.Y - _halfHeight;
+            bounds.Bottom = Position.Y + _halfHeight;
+            Bounds = bounds;
         }
     }
 }

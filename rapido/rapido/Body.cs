@@ -1,4 +1,5 @@
-﻿using rapido.Common;
+﻿using rapido.Collisions;
+using rapido.Common;
 using System;
 using System.Collections.Generic;
 
@@ -6,10 +7,16 @@ namespace rapido
 {
     public abstract class Body : Collisions.AABB
     {
+        protected abstract void updateBounds();
+
         /// <summary>
         /// Current archor position
         /// </summary>
         public Point Position { get; set; }
+        /// <summary>
+        /// Diference between current and last update position
+        /// </summary>
+        public Point Delta { get; set; }
         /// <summary>
         /// Object moving in vector direction
         /// </summary>
@@ -29,5 +36,20 @@ namespace rapido
         {
             CollisionGroups = new List<string>();
         }
+
+        public void UpdateBody(float timelapsed)
+        {
+            if (Velocity.Equals(Vector.Zero))
+                Delta = Point.Zero;
+            else {
+                Point newposition = new Point(Position.X + Velocity.Lambda.X * timelapsed, Position.Y + Velocity.Lambda.Y * timelapsed);
+                Delta = newposition - Position;
+                Position = newposition;
+            }
+
+            updateBounds();
+
+        }
+
     }
 }

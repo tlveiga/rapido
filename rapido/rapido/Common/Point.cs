@@ -5,12 +5,16 @@ using System.Text;
 
 namespace rapido.Common
 {
-    public class Point
+    public struct Point
     {
+        private static Point _zero = new Point(0f, 0f);
+        public static Point Zero { get { return _zero; } }
+
+        private static Point _invalid = new Point(float.NaN, float.NaN);
+        public static Point Invalid { get { return _invalid; } }
+
         public float X { get; private set; }
         public float Y { get; private set; }
-
-        public Point() : this(0f,0f) { }
 
         public Point(float x, float y)
         {
@@ -35,8 +39,9 @@ namespace rapido.Common
 
         public override bool Equals(object obj)
         {
-            Point p = obj as Point;
-            return p != null && X.Equals(p.X) && Y.Equals(p.Y);
+            if (!(obj is Point)) return false;
+            Point p = (Point)obj;
+            return X.Equals(p.X) && Y.Equals(p.Y);
         }
 
         public override string ToString()

@@ -1,25 +1,43 @@
-﻿using System;
+﻿using rapido.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace rapido.Collisions
 {
-    public abstract class AABB : CollisionObject
+    public abstract class AABB
     {
-        protected float _x;
-        protected float _X;
-        protected float _y;
-        protected float _Y;
+        public Box Bounds { get; set; }
 
-        public override event CollisionHandler Collision;
+        public delegate void CollisionHandler(object sender, object target);
+        public event CollisionHandler Collision;
 
-        public override bool Collides(AABB aabb)
+        public delegate void OutBoundsHandler(object sender, Box target);
+        public event OutBoundsHandler OutBounds;
+
+        public bool Collides(AABB aabb)
         {
-            return (_X >= aabb._x) && (_Y >= aabb._y) && (aabb._X >= _x) && (aabb._Y >= _y); 
+            return (Bounds.Right >= aabb.Bounds.Left) && (Bounds.Bottom >= aabb.Bounds.Top) &&
+                (aabb.Bounds.Right >= Bounds.Left) && (aabb.Bounds.Bottom >= Bounds.Top);
         }
 
-        protected override void checkCollision(AABB target)
+        public bool InsideBounds(Box box)
+        {
+            return Bounds.Top > box.Top && Bounds.Bottom < box.Bottom && Bounds.Left > box.Left && Bounds.Right < box.Right;
+        }
+
+        public void CheckBounds(Box box)
+        {
+            if(OutBounds != null && !InsideBounds(box))
+                OutBounds(this, box);
+        }
+
+        /// <summary>
+        /// Check collision and fires event
+        /// </summary>
+        /// <param name="target"></param>
+        public void CheckCollision(AABB target)
         {
             if (Collision != null && Collides(target))
                 Collision(this, target);
