@@ -5,6 +5,7 @@ using rapido;
 using rapido.Shapes;
 using rapido.Common;
 using System;
+using System.Collections.Generic;
 
 namespace MonoGameSample
 {
@@ -25,6 +26,8 @@ namespace MonoGameSample
         Color body1color;
         Color body2color;
 
+        List<Body> _enemies = new List<Body>();
+
         rapido.Shapes.Rectangle player;
 
         public Game1()
@@ -37,34 +40,49 @@ namespace MonoGameSample
         protected Body createBody()
         {
             rapido.Shapes.Rectangle body;
-            body = new rapido.Shapes.Rectangle(world, new rapido.Common.Point(world.Size.X * (float)rnd.NextDouble(), world.Size.Y * (float)rnd.NextDouble()), world.Size.X * 0.1f, world.Size.X * 0.1f);
-            body.Velocity = new rapido.Common.Vector((float)(rnd.NextDouble() * Math.PI * 2), 0.1f * world.Size.X);
-            body.Collision += Body_Collision;
+            body = new rapido.Shapes.Rectangle(new rapido.Common.Point(world.Size.X * (float)rnd.NextDouble(), world.Size.Y * (float)rnd.NextDouble()), world.Size.X * 0.1f, world.Size.X * 0.1f);
+            body.Velocity = new rapido.Common.Vector((float)(rnd.NextDouble() * Math.PI * 2), 0.5f * world.Size.X);
+            body.DidCollide += Body_DidCollide;
             body.Collide = true;
-            body.CollisionGroups.Add("group");
             body.CollideWithWorldBoundaries = true;
-            body.OutBounds += Body_OutBounds;
+            body.Bounce = true;
+            body.DidWorldCollide += Body_DidWorldCollide;
+
+            body.CollisionGroups.Add("group");
 
             world.Groups[0].Add(body);
 
             return body;
         }
 
+        private void Body_DidWorldCollide(object sender, BodyEventArgs args)
+        {
+        }
+
+        private void Body_DidCollide(object sender, BodyEventArgs args)
+        {
+            return;
+            if (sender == player)
+            {
+                (args.Target as Body).MarkDestroy = true;
+                point++;
+            }
+        }
 
         protected Body fire()
         {
             rapido.Shapes.Rectangle body;
-            body = new rapido.Shapes.Rectangle(world, player.Position, 10, 10);
+            body = new rapido.Shapes.Rectangle(player.Position, 10, 10);
             body.Velocity = new rapido.Common.Vector((float)(rnd.NextDouble() * Math.PI * 2), 0.52f * world.Size.X);
             body.CollideWithWorldBoundaries = true;
-            body.OutBounds += Fire_OutBounds;
+            body.DidWorldCollide += Fire_DidWorldCollide; 
 
             return body;
         }
 
-        private void Fire_OutBounds(object sender, Box target)
+        private void Fire_DidWorldCollide(object sender, BodyEventArgs args)
         {
-            (sender as Body).WillDestroy = true;
+            (sender as Body).MarkDestroy = true;
         }
 
         /// <summary>
@@ -77,31 +95,16 @@ namespace MonoGameSample
         {
             world = new World(new rapido.Common.Point(graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
             world.Groups.Add(new Group("group"));
+            world.Groups.Add(new Group("bullet"));
 
             player = (rapido.Shapes.Rectangle)createBody();
+            player.CollisionGroups.Add("group");
+            player.ID = "player";
+
             player.Velocity = Vector.Zero;
             world.Bodies.Add(player);
 
             base.Initialize();
-        }
-
-        private void Body_OutBounds(object sender, Box target)
-        {
-            body2color = Color.Yellow;
-        }
-
-        private void Body_Collision(object sender, object target)
-        {
-            if (sender == player)
-            {
-                (target as Body).WillDestroy = true;
-                point++;
-            }
-            return;
-            (sender as Body).WillDestroy = true;
-            (target as Body).WillDestroy = true;
-            body2color = Color.White * 0.5f;
-            // throw new System.NotImplementedException();
         }
 
         /// <summary>
@@ -145,8 +148,11 @@ namespace MonoGameSample
                 world.Bodies.Add(fire());
 
             if (world.Bodies.Count < 3)
-                world.Bodies.Add(createBody());
-
+            {
+                Body body = createBody();
+                body.BounceInWorldBoundaries = true;
+                world.Bodies.Add(body);
+            }
             body1color = Color.White;
             body2color = Color.White;
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace rapido.Common
 {
-    public struct Point
+    public class Point
     {
         private static Point _zero = new Point(0f, 0f);
         public static Point Zero { get { return _zero; } }
@@ -15,6 +15,8 @@ namespace rapido.Common
 
         public float X { get; private set; }
         public float Y { get; private set; }
+
+        public Point() : this(0f, 0f) { }
 
         public Point(float x, float y)
         {

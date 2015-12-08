@@ -1,4 +1,5 @@
-﻿using rapido.Common;
+﻿using rapido.Collisions;
+using rapido.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 
 namespace rapido.Shapes
 {
-    public class Rectangle : Body
+    public class Rectangle : AABBBody
     {
         public float Width { get; private set; }
         public float Height { get; private set; }
@@ -14,7 +15,7 @@ namespace rapido.Shapes
         protected float _halfWidth;
         protected float _halfHeight;
 
-        public Rectangle(World world, Point center, float width, float height) : base(world)
+        public Rectangle(Point center, float width, float height)
         {
             Position = center;
             Width = width;
@@ -22,17 +23,17 @@ namespace rapido.Shapes
             Height = height;
             _halfHeight = height / 2;
 
-            updateBounds();
+            Bounds = CalculateBounds(Position);
         }
 
-        protected override void updateBounds()
+        protected override Box CalculateBounds(Point position)
         {
             Box bounds = new Box();
-            bounds.Left = Position.X - _halfWidth;
-            bounds.Right = Position.X + _halfWidth;
-            bounds.Top = Position.Y - _halfHeight;
-            bounds.Bottom = Position.Y + _halfHeight;
-            Bounds = bounds;
+            bounds.Left = position.X - _halfWidth;
+            bounds.Right = position.X + _halfWidth;
+            bounds.Top = position.Y - _halfHeight;
+            bounds.Bottom = position.Y + _halfHeight;
+            return bounds;
         }
     }
 }

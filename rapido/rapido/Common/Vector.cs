@@ -5,7 +5,7 @@ using System.Text;
 
 namespace rapido.Common
 {
-    public struct Vector
+    public class Vector
     {
         private static Vector _zero = new Vector(Point.Zero);
         public static Vector Zero { get { return _zero; } }

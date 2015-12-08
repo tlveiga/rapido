@@ -1,4 +1,5 @@
-﻿using rapido.Common;
+﻿using rapido.Collisions;
+using rapido.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,25 +7,25 @@ using System.Text;
 
 namespace rapido.Shapes
 {
-    public class Circle : Body
+    public class Circle : AABBBody
     {
         public float Radius { get; private set; }
 
-        public Circle(World world, Point center, float radius) : base (world)
+        public Circle(Point center, float radius)
         {
             Position = center;
             Radius = radius;
-            updateBounds();
+            Bounds = CalculateBounds(Position);
         }
 
-        protected override void updateBounds()
+        protected override Box CalculateBounds(Point position)
         {
             Box bounds = new Box();
-            bounds.Left = Position.X - Radius;
-            bounds.Right = Position.X + Radius;
-            bounds.Top = Position.Y - Radius;
-            bounds.Bottom = Position.Y + Radius;
-            Bounds = bounds;
+            bounds.Left = position.X - Radius;
+            bounds.Right = position.X + Radius;
+            bounds.Top = position.Y - Radius;
+            bounds.Bottom = position.Y + Radius;
+            return bounds;
         }
     }
 }
