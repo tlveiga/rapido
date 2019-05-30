@@ -61,7 +61,7 @@ namespace MonoGameSample
 
         private void Body_DidCollide(object sender, BodyEventArgs args)
         {
-            return;
+            //return;
             if (sender == player)
             {
                 (args.Target as Body).MarkDestroy = true;
